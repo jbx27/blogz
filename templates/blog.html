@@ -9,7 +9,7 @@
     {% else %}
 
     {% for post in posts %}
-        <h4>{{post.title}}</h4>
+        <h4><a href="blog?id={{post.id}}">{{post.title}}</a></h4>
             <p>{{post.body}}</p>
         {% endfor %}
     {% endif %}
