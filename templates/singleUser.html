@@ -10,8 +10,8 @@
         {% for post in user_posts %}
 
         <h4><a href="/blog?id={{post.id}}">{{post.title}}</a></h4>
-            <p>{{post.body}}</p>
-            <p>Written by <a href="/blog?user={{user.id}}">{{ user.username }}</a></p>
+        <p>{{post.body}}</p>
+        <p>Written by <a href="/blog?user={{user.id}}">{{user.username}}</a></p>
 
         {% endfor %}
     

@@ -40,25 +40,28 @@ def signup():
         username = request.form['username']
         password = request.form['password']
         verify = request.form['verify']
+        existing_user = User.query.filter_by(username=username).first()
 
         if username == "" or password == "" or verify == "":
             flash("Please enter a valid username and password")
+            return redirect ('/signup')
         elif len(username) <3 or len(password) < 3:
             flash("Invalid username or password. Please enter a username and password that has at least 3 characters long.")
+            return redirect ('/signup')
         elif password != verify:
             flash("Password and verify do not match.")
-        existing_user = User.query.filter_by(username=username).first()
-        if not existing_user:
+            return redirect ('/signup')
+        elif existing_user:
+            flash("Username taken, please choose another Username")
+            return redirect('/signup')
+
+        else:
             new_user = User(username, password)
             db.session.add(new_user)
             db.session.commit()
             #remember user
             session['username'] = username
-            return redirect('/newpost')
-        else:
-            flash("Username taken, please choose another Username")
-            return redirect('/signup')
-    
+            return redirect('/newpost')    
     
     return render_template('signup.html')
 
@@ -106,14 +109,15 @@ def blog():
     user_id = request.args.get('user')
     if user_id:
         user = User.query.get(user_id)
-        user_posts = Blog.query.filter_by(owner_id=user_id).all()
-        return render_template('singleUser.html', user=user, user_posts=user_posts)
-    if post_id:
+        user_posts = Blog.query.filter_by(owner_id = user_id).all()
+        return render_template('singleUser.html', user = user, user_posts = user_posts)
+    if post_id:   
         post = Blog.query.get(post_id)
-        return render_template('post_page.html', post = post)
+        user = User.query.get(post.owner_id)
+        return render_template('post_page.html', post = post, user = user )
     else:
         posts = Blog.query.all()
-        return render_template("/blog.html", posts = posts)
+        return render_template('blog.html', posts = posts)
     
    
 @app.route('/newpost', methods=['GET', 'POST'])
